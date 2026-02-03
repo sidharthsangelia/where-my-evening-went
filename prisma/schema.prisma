@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String
+  timezone  String    @default("UTC")
+  aiOptIn   Boolean   @default(false)
+  aiOptInAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  entry     Entry[]
+}
+
+model Entry {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  // 1. Store the local date as a String (YYYY-MM-DD) 
+  date       String
+  audioUrl   String
+  imageUrl   String? // Optional field
+  mood       String? // Optional field
+  transcript String? // Nullable field
+  aiAllowed  Boolean  @default(false)
+  // 2. When the entry was created in UTC
+  createdAt  DateTime @default(now())
+
+  // 3. Performance: Index the userId and date for fast lookups
+  @@index([userId, date])
+}
