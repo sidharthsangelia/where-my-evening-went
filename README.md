@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Where My Evening Went
 
-## Getting Started
+A privacy-first, voice-first personal reflection app.
 
-First, run the development server:
+Users record a short voice entry about how their evening went, creating a private, read-only archive over time.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This repository contains the core application code and infrastructure for the project.
+
+---
+
+## Overview
+
+Where My Evening Went is a lightweight web app designed for intentional daily reflection.
+
+The experience is deliberately minimal:
+- No feeds
+- No social features
+- No optimization loops
+- No engagement mechanics
+
+The app focuses on capturing a single moment per day and preserving it as-is.
+
+---
+
+## Tech Stack
+
+**Frontend & Backend**
+- Next.js (App Router)
+- TypeScript
+- Server Actions / Route Handlers
+
+**Authentication**
+- Clerk
+
+**Database**
+- PostgreSQL (Neon)
+
+**File Storage**
+- UploadThing (audio + optional images)
+
+**Validation & Background Jobs**
+- Zod
+- Inngest
+
+**Optional / Paid Features**
+- Speech-to-text (e.g. Whisper)
+- LLM-based summaries (opt-in only)
+
+---
+
+## Core Features (MVP)
+
+- User authentication
+- Browser-based voice recording
+- One voice entry per day
+- Read-only archive of past entries
+- Optional metadata (mood, image)
+- Full data export
+- Account deletion
+
+---
+
+## Project Structure
+
+```txt
+/
+├─ app/
+│  ├─ api/            # Route handlers
+│  ├─ today/          # Daily entry UI
+│  ├─ archive/        # Read-only history
+│  └─ settings/       # Account & data controls
+│
+├─ server/
+│  ├─ services/       # Core business logic
+│  ├─ validators/     # Zod schemas
+│  └─ lib/            # DB, auth, utilities
+│
+├─ docs/
+│  └─ PROJECT_OVERVIEW.mdx
+│
+├─ .env.example
+├─ README.md
+└─ package.json
 ```
+Local Development
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Clone the repository
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Install dependencies
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+npm install
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+Create a .env.local file based on .env.example
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Run the development server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+npm run dev
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open http://localhost:3000
