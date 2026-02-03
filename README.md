@@ -82,20 +82,19 @@ The app focuses on capturing a single moment per day and preserving it as-is.
 ├─ README.md
 └─ package.json
 ```
-Local Development
+##Local Development
 
-Clone the repository
+-Clone the repository
 
-Install dependencies
+-Install dependencies
 
-npm install
+-npm install
+
+-Create a .env.local file based on .env.example
+
+-Run the development server
+
+-npm run dev
 
 
-Create a .env.local file based on .env.example
-
-Run the development server
-
-npm run dev
-
-
-Open http://localhost:3000
+###Open http://localhost:3000
