@@ -12,7 +12,8 @@
   "dependencies": {
     "@clerk/nextjs": "^6.37.1",
     "@prisma/adapter-neon": "^7.3.0",
-    "@prisma/client": "^7.3.0",
+    "@prisma/client": "^7.4.0",
+    "@uploadthing/react": "^7.3.3",
     "@wavesurfer/react": "^1.0.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -23,8 +24,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-media-recorder": "^1.7.2",
-    "react-voice-visualizer": "^2.0.8",
     "tailwind-merge": "^3.4.0",
+    "uploadthing": "^7.7.4",
     "wavesurfer.js": "^7.12.1"
   },
   "devDependencies": {

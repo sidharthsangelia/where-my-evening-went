@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js" // ✅ Changed from "prisma-client"
+  output   = "../app/generated/prisma" // ✅ Added /client subfolder
 }
 
 datasource db {
@@ -16,23 +16,20 @@ model User {
   aiOptInAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  entry     Entry[]
+  entries   Entry[] // ✅ Renamed from 'entry' to 'entries' (convention)
 }
 
 model Entry {
   id         String   @id @default(uuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  // 1. Store the local date as a String (YYYY-MM-DD) 
-  date       String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade) // ✅ Added onDelete
   audioUrl   String
-  imageUrl   String? // Optional field
-  mood       String? // Optional field
-  transcript String? // Nullable field
+  imageUrl   String?
+  mood       String?
+  transcript String?
   aiAllowed  Boolean  @default(false)
-  // 2. When the entry was created in UTC
   createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt // ✅ Added updatedAt
 
-  // 3. Performance: Index the userId and date for fast lookups
-  @@index([userId, date])
+  @@index([userId])
 }
