@@ -1,11 +1,11 @@
-import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import prisma from "@/lib/prisma";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
-
+    console.log("🔍 Auth check:", { userId, hasUserId: !!userId });
     if (!userId) {
       return NextResponse.json({ error: "Unautharized ❌" }, { status: 401 });
     }
@@ -17,6 +17,20 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+
+    const clerkUser = await (await clerkClient()).users.getUser(userId);
+
+    // ✅ Create user if not exists
+    await prisma.user.upsert({
+      where: { id: userId },
+      update: {},
+      create: {
+        id: userId,
+        email: clerkUser.emailAddresses[0]?.emailAddress ?? "",
+        name: clerkUser.firstName ?? "",
+      },
+    });
+    
     const recording = await prisma.entry.create({
       data: {
         userId: userId,

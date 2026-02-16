@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useUploadThing } from "@/lib/uploadthing";
 import Mic from "@/components/Mic";
 import { useAuth } from "@clerk/nextjs";
+import { saveRecording } from "@/actions/recordings";
 
 export default function RecordPage() {
   const { isSignedIn, isLoaded, userId } = useAuth();
@@ -33,7 +34,7 @@ export default function RecordPage() {
   };
 
   const uploadRecording = async (blob: Blob) => {
-    const audioFile = new File([blob], `evening-${userId}-${Date.now}.webm`, {
+    const audioFile = new File([blob], `evening-${userId}-${Date.now()}.webm`, {
       type: blob.type,
     });
 
@@ -41,8 +42,42 @@ export default function RecordPage() {
 
     if (res?.[0]) {
       console.log("Upload Successful 🚀🌱");
-      // TODO: Save to database here
+      // Save to database in uplaoding core function server action
+      // await saveRecording(res[0].ufsUrl);
+
+      // api route
+      await saveRecordingToDB({
+        audioUrl: res[0].ufsUrl,
+        fileName: audioFile.name,
+      });
       router.push("/archive");
+    }
+  };
+
+  const saveRecordingToDB = async (params: {
+    audioUrl: string;
+    fileName?: string;
+    duration?: number;
+  }) => {
+    try {
+      const res = await fetch("/api/recordings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error?.error || "Failed to save recording");
+      }
+
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("❌ saveRecordingToDB failed:", err);
+      throw err;
     }
   };
 

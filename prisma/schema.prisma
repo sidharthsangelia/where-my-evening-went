@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js" // ✅ Changed from "prisma-client"
-  output   = "../app/generated/prisma" // ✅ Added /client subfolder
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
+  id        String    @id 
   email     String    @unique
   name      String
   timezone  String    @default("UTC")
@@ -16,20 +16,20 @@ model User {
   aiOptInAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  entries   Entry[] // ✅ Renamed from 'entry' to 'entries' (convention)
+  entries   Entry[] // 
 }
 
 model Entry {
   id         String   @id @default(uuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade) // ✅ Added onDelete
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   audioUrl   String
   imageUrl   String?
   mood       String?
   transcript String?
   aiAllowed  Boolean  @default(false)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt // ✅ Added updatedAt
+  updatedAt  DateTime @updatedAt 
 
   @@index([userId])
 }
