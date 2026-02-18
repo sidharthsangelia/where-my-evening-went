@@ -7,8 +7,15 @@ datasource db {
   provider = "postgresql"
 }
 
+enum EntryStatus {
+  UPLOADED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
 model User {
-  id        String    @id 
+  id        String    @id
   email     String    @unique
   name      String
   timezone  String    @default("UTC")
@@ -16,20 +23,40 @@ model User {
   aiOptInAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  entries   Entry[] // 
+  entries   Entry[]
+
+  @@index([email])
 }
 
 model Entry {
-  id         String   @id @default(uuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  audioUrl   String
-  imageUrl   String?
-  mood       String?
-  transcript String?
-  aiAllowed  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt 
+  id              String       @id @default(uuid())
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  audioUrl        String
+  imageUrl        String?
+
+  durationSeconds Int?
+  fileSize        Int?
+
+  transcript      String?
+  summary         String?
+  reflection      String?
+
+  emotions        String[]
+  tags            String[]
+
+  status          EntryStatus  @default(UPLOADED)
+
+  tokensUsed      Int?
+  processedAt     DateTime?
+  errorMessage    String?
+
+  deletedAt       DateTime?
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
   @@index([userId])
+  @@index([status])
 }
