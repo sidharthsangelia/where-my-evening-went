@@ -7,6 +7,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import Mic from "@/components/Mic";
 import { useAuth } from "@clerk/nextjs";
 import { saveRecording } from "@/actions/recordings";
+import { inngest } from "@/lib/inngest/client";
 
 export default function RecordPage() {
   const { isSignedIn, isLoaded, userId } = useAuth();
@@ -43,14 +44,23 @@ export default function RecordPage() {
     if (res?.[0]) {
       console.log("Upload Successful 🚀🌱");
       // Save to database in uplaoding core function server action
-      // await saveRecording(res[0].ufsUrl);
+      const { entry } = await saveRecording(res[0].ufsUrl);
 
       // api route
-      await saveRecordingToDB({
-        audioUrl: res[0].ufsUrl,
-        fileName: audioFile.name,
-      });
+      // await saveRecordingToDB({
+      //   audioUrl: res[0].ufsUrl,
+      //   fileName: audioFile.name,
+      // });
+
       router.push("/archive");
+
+      // inngest event invoked
+      await inngest.send({
+        name: "entry/created",
+        data: {
+          entryId: entry?.id,
+        },
+      });
     }
   };
 
