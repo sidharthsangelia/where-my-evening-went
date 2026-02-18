@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { inngest } from "../client";
 import { transcribeAudio } from "@/lib/ai/transcribeAudio";
+import { analyzeEntry } from "@/lib/ai/analyzeEntry";
 
 export const processEntry = inngest.createFunction(
   { id: "process-entry" },
@@ -42,10 +43,31 @@ export const processEntry = inngest.createFunction(
           where: { id: entryId },
           data: {
             transcript,
-            status: "COMPLETED",
           },
         });
         console.log("Transcription completed:", entryId);
+      });
+
+      // Entry Analysis
+      const analysis = await step.run("analyze-entry", async () => {
+        if (!transcript) {
+          throw new Error("Transcript doesnot exist can proceed forward❌");
+        }
+        return await analyzeEntry(transcript);
+      });
+      // saving analysis in db and updating status to complete
+      await step.run("save-analysis", async () => {
+        await prisma.entry.update({
+          where: { id: entryId },
+          data: {
+            summary: analysis.summary,
+            reflection: analysis.reflection,
+            emotions: analysis.emotions,
+            tags: analysis.tags,
+            processedAt: new Date(),
+            status: "COMPLETED",
+          },
+        });
       });
     } catch (error: any) {
       // marking transcription failed in db
