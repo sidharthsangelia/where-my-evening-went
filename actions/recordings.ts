@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-export async function saveRecording(audioUrl: string) {
+export async function saveRecording(audioUrl: string, fileSize:number, durationSeconds: number) {
   const { userId } = await auth();
 
   if (!userId) {
@@ -30,6 +30,8 @@ export async function saveRecording(audioUrl: string) {
     data: {
       userId,
       audioUrl,
+      fileSize,
+      durationSeconds,
       status: "UPLOADED",
     },
   });

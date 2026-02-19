@@ -8,6 +8,7 @@ import Mic from "@/components/Mic";
 import { useAuth } from "@clerk/nextjs";
 import { saveRecording } from "@/actions/recordings";
 import { inngest } from "@/lib/inngest/client";
+import { getAudioDuration } from "@/lib/getAudioDuration";
 
 export default function RecordPage() {
   const { isSignedIn, isLoaded, userId } = useAuth();
@@ -35,6 +36,7 @@ export default function RecordPage() {
   };
 
   const uploadRecording = async (blob: Blob) => {
+    const durationSeconds = Math.round(await getAudioDuration(blob));
     const audioFile = new File([blob], `evening-${userId}-${Date.now()}.webm`, {
       type: blob.type,
     });
@@ -44,7 +46,11 @@ export default function RecordPage() {
     if (res?.[0]) {
       console.log("Upload Successful 🚀🌱");
       // Save to database in uplaoding core function server action
-      const { entry } = await saveRecording(res[0].ufsUrl);
+      const { entry } = await saveRecording(
+        res[0].ufsUrl,
+        audioFile.size,
+        durationSeconds,
+      );
 
       // api route
       // await saveRecordingToDB({

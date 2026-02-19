@@ -66,6 +66,7 @@ export const processEntry = inngest.createFunction(
             tags: analysis.tags,
             processedAt: new Date(),
             status: "COMPLETED",
+            tokensUsed: analysis.tokensUsed,
           },
         });
       });
