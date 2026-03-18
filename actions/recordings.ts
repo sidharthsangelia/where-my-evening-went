@@ -1,20 +1,32 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-export async function saveRecording(audioUrl: string, fileSize:number, durationSeconds: number) {
+interface SaveRecordingOptions {
+  imageUrl?: string
+  mood?: string  // stored in emotions[] — the single selected mood for this entry
+}
+
+export async function saveRecording(
+  audioUrl: string,
+  fileSize: number,
+  durationSeconds: number,
+  options: SaveRecordingOptions = {},
+) {
   const { userId } = await auth();
 
   if (!userId) {
     return { success: false, error: "Unauthorized" };
   }
 
+  const { imageUrl, mood } = options
+
   // Fetch user info from Clerk
   const clerkUser = await (await clerkClient()).users.getUser(userId);
 
-  // ✅ Create user if not exists
+  // Create user if not exists
   await prisma.user.upsert({
     where: { id: userId },
     update: {},
@@ -25,7 +37,7 @@ export async function saveRecording(audioUrl: string, fileSize:number, durationS
     },
   });
 
-  // ✅ Now safe to create entry
+  // Create the entry with all available data
   const entry = await prisma.entry.create({
     data: {
       userId,
@@ -33,6 +45,11 @@ export async function saveRecording(audioUrl: string, fileSize:number, durationS
       fileSize,
       durationSeconds,
       status: "UPLOADED",
+      // imageUrl is optional — only set if user added a photo
+      ...(imageUrl ? { imageUrl } : {}),
+      // mood goes into emotions[] — AI processing may add more emotions later
+      // so we seed the array with the user's self-reported mood
+      mood: mood,
     },
   });
 

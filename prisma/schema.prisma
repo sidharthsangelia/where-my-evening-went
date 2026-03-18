@@ -35,6 +35,7 @@ model Entry {
 
   audioUrl        String
   imageUrl        String?
+  mood            String?
 
   durationSeconds Int?
   fileSize        Int?
