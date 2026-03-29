@@ -1,3 +1,4 @@
+import DayContent from "@/components/DayContent";
 import MobileHeader from "@/components/MobileHeader";
 import { parseDateParam, toDateParam } from "@/lib/week";
 import { notFound } from "next/navigation";
@@ -7,7 +8,7 @@ interface Props {
 }
 
 export default async function DashboardDatePage({ params }: Props) {
-  const { date } = await params;  // ← unwrap first
+  const { date } = await params; // ← unwrap first
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     notFound();
@@ -33,13 +34,6 @@ export default async function DashboardDatePage({ params }: Props) {
 }
 
 /** Placeholder — swap this out for your real entry/content component */
-function DayContent({ date }: { date: string }) {
-  return (
-    <div className="rounded-2xl bg-white border border-[#e8e4da] p-5 text-sm text-[#7a7168]">
-      Content for {date} goes here.
-    </div>
-  );
-}
 
 /**
  * generateStaticParams is intentionally omitted so that all dates are
