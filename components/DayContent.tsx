@@ -2,6 +2,8 @@ import { auth } from "@clerk/nextjs/server";
 import { getDayEntry } from "@/actions/entry";
 import { parseDateParam, toDateParam } from "@/lib/week";
 import Link from "next/link";
+import AudioPlayer from "./AudioPlayer";
+ 
 
 type Entry = NonNullable<Awaited<ReturnType<typeof getDayEntry>>>;
 
@@ -9,17 +11,17 @@ interface Props {
   date: string;
 }
 
-// ─── Prompts pool — deterministically rotated by date ──────────────────────
+// ─── Prompts pool ──────────────────────────────────────────────────────────
 
 const PROMPTS = [
-  { text: "What surprised you tonight?", icon: "✨" },
-  { text: "What's still on your mind?", icon: "💭" },
-  { text: "What made you laugh today?", icon: "😄" },
-  { text: "What drained your energy?", icon: "🔋" },
-  { text: "Who did you connect with?", icon: "👥" },
-  { text: "What do you want to remember?", icon: "📌" },
-  { text: "What are you grateful for?", icon: "🙏" },
-  { text: "How did your body feel today?", icon: "🫀" },
+  { text: "What surprised you tonight?",    icon: "✨" },
+  { text: "What's still on your mind?",     icon: "💭" },
+  { text: "What made you laugh today?",     icon: "😄" },
+  { text: "What drained your energy?",      icon: "🔋" },
+  { text: "Who did you connect with?",      icon: "👥" },
+  { text: "What do you want to remember?",  icon: "📌" },
+  { text: "What are you grateful for?",     icon: "🙏" },
+  { text: "How did your body feel today?",  icon: "🫀" },
   { text: "What would you do differently?", icon: "🔄" },
 ];
 
@@ -38,10 +40,10 @@ export default async function DayContent({ date }: Props) {
   const { userId } = await auth();
   if (!userId) return null;
 
-  const entry = await getDayEntry(userId, date);
-  const isToday = date === toDateParam(new Date());
+  const entry        = await getDayEntry(userId, date);
+  const isToday      = date === toDateParam(new Date());
   const selectedDate = parseDateParam(date);
-  const isFuture = selectedDate > new Date();
+  const isFuture     = selectedDate > new Date();
 
   if (isFuture) return <FutureDay />;
   if (!entry)   return <NoEntry date={date} isToday={isToday} />;
@@ -51,7 +53,6 @@ export default async function DayContent({ date }: Props) {
 // ─── No Entry ──────────────────────────────────────────────────────────────
 
 function NoEntry({ date, isToday }: { date: string; isToday: boolean }) {
-  // Deterministic prompt selection based on date
   const seed = parseInt(date.replace(/-/g, ""), 10);
   const prompts = [
     PROMPTS[seed % PROMPTS.length],
@@ -61,16 +62,14 @@ function NoEntry({ date, isToday }: { date: string; isToday: boolean }) {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* ── Night-sky hero card ─────────────────────────── */}
+      {/* Night-sky hero card */}
       <div
         className="rounded-3xl p-5 relative overflow-hidden"
         style={{
-          background:
-            "linear-gradient(145deg, #1c1410 0%, #2a1c0d 45%, #150f08 100%)",
+          background: "linear-gradient(145deg, #1c1410 0%, #2a1c0d 45%, #150f08 100%)",
           minHeight: "210px",
         }}
       >
-        {/* Decorative stars */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {[
             { top: "10%", left: "16%", w: 3, o: 0.4 },
@@ -84,77 +83,52 @@ function NoEntry({ date, isToday }: { date: string; isToday: boolean }) {
             <div
               key={i}
               className="absolute rounded-full bg-white"
-              style={{
-                top: s.top,
-                left: s.left,
-                width: s.w,
-                height: s.w,
-                opacity: s.o,
-              }}
+              style={{ top: s.top, left: s.left, width: s.w, height: s.w, opacity: s.o }}
             />
           ))}
-
-          {/* Moon */}
           <div
             className="absolute rounded-full"
             style={{
-              width: 72,
-              height: 72,
-              top: -16,
-              right: 20,
+              width: 72, height: 72, top: -16, right: 20,
               background: "#fefce8",
-              boxShadow:
-                "0 0 40px 8px rgba(254,249,236,0.12), 0 0 70px 20px rgba(245,178,27,0.06)",
+              boxShadow: "0 0 40px 8px rgba(254,249,236,0.12), 0 0 70px 20px rgba(245,178,27,0.06)",
             }}
           />
         </div>
 
-        {/* Text content */}
         <div className="relative z-10">
           <p className="text-[9px] font-bold text-white/35 uppercase tracking-[0.16em] mb-3">
             {isToday ? "This evening" : "That evening"}
           </p>
-
           <h2 className="text-white font-bold text-xl leading-snug mb-1.5">
-            {isToday
-              ? "Where did your\nevening go?"
-              : "You didn't log\nthis evening"}
+            {isToday ? "Where did your\nevening go?" : "You didn't log\nthis evening"}
           </h2>
-
           <p className="text-white/45 text-[13px] leading-relaxed mb-6">
             {isToday
               ? "Talk for 3 minutes. We'll handle the rest."
               : "It's not too late — add a late entry."}
           </p>
-
-          {/* Record button with animated waveform bars */}
           <Link
             href={`/record?date=${date}`}
             className="flex items-center justify-center gap-3 w-full py-[15px] rounded-2xl font-bold text-[15px] active:scale-[0.97] transition-transform"
             style={{ background: "#f5b21b", color: "#fff" }}
           >
             <span className="text-base">🎙️</span>
-
-            {/* Waveform — uses the waveBar keyframe from globals.css */}
             <div className="flex items-end gap-[3px]" style={{ height: 14 }}>
               {[4, 9, 6, 13, 8, 11, 5].map((h, i) => (
                 <div
                   key={i}
                   className="w-[2px] rounded-full bg-white/75"
-                  style={{
-                    height: h,
-                    animation: `waveBar 1.2s ease-in-out ${i * 0.12}s infinite`,
-                  }}
+                  style={{ height: h, animation: `waveBar 1.2s ease-in-out ${i * 0.12}s infinite` }}
                 />
               ))}
             </div>
-
             Start recording
           </Link>
         </div>
       </div>
 
-      {/* ── Mood picker ─────────────────────────────────── */}
+      {/* Mood picker */}
       <div>
         <p className="text-[10px] font-bold text-[#9a9185] uppercase tracking-widest mb-3 px-0.5">
           How are you feeling?
@@ -167,15 +141,13 @@ function NoEntry({ date, isToday }: { date: string; isToday: boolean }) {
               className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-white border border-[#e8e4da] hover:border-[#f5b21b]/50 hover:bg-[#fefce8] active:scale-95 transition-all"
             >
               <span className="text-[22px] leading-none">{mood.emoji}</span>
-              <span className="text-[11px] font-semibold text-[#7a7168]">
-                {mood.label}
-              </span>
+              <span className="text-[11px] font-semibold text-[#7a7168]">{mood.label}</span>
             </Link>
           ))}
         </div>
       </div>
 
-      {/* ── Reflection prompts ───────────────────────────── */}
+      {/* Reflection prompts */}
       <div>
         <p className="text-[10px] font-bold text-[#9a9185] uppercase tracking-widest mb-3 px-0.5">
           Need a starting point?
@@ -210,14 +182,12 @@ function FutureDay() {
           <path d="M17 12h-5v5h5v-5ZM16 1v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1h-2Zm3 18H5V8h14v11Z" />
         </svg>
       </div>
-      <p className="text-sm text-[#b0a89e]">
-        Nothing here yet — check back later.
-      </p>
+      <p className="text-sm text-[#b0a89e]">Nothing here yet — check back later.</p>
     </div>
   );
 }
 
-// ─── Entry Preview (completed entry) ──────────────────────────────────────
+// ─── Entry Preview ─────────────────────────────────────────────────────────
 
 function EntryPreview({ entry }: { entry: Entry }) {
   if (entry.status === "PROCESSING" || entry.status === "UPLOADED") {
@@ -227,114 +197,102 @@ function EntryPreview({ entry }: { entry: Entry }) {
     return <FailedCard />;
   }
 
-  const emoji = moodEmoji(entry.mood ?? "");
-  const mc = moodColors(entry.mood ?? "");
+  const mood  = entry.userMood ?? entry.vibe ?? "";
+  const emoji = moodEmoji(mood);
+
+  // Pull a punchy short quote from the transcript (first sentence ≤ 120 chars)
+  const pullQuote = extractPullQuote(entry.transcript);
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Main entry card */}
-      <div
-        className="rounded-3xl overflow-hidden border border-[#e8e4da]"
-        style={{ background: mc.cardBg }}
-      >
-        {/* Mood banner */}
-        <div className="px-4 pt-4 pb-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl leading-none">{emoji}</span>
-            <div>
-              <p
-                className="text-[9px] font-bold uppercase tracking-widest mb-0.5"
-                style={{ color: mc.muted }}
-              >
-                Mood
-              </p>
-              <p
-                className="text-sm font-bold capitalize"
-                style={{ color: mc.text }}
-              >
-                {entry.mood ?? "Not recorded"}
-              </p>
-            </div>
-          </div>
+    <div className="flex flex-col gap-4">
 
-          {entry.durationSeconds && (
-            <div
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-              style={{ background: mc.pill }}
-            >
-              {/* Mini waveform pip */}
-              <div className="flex items-end gap-[2px]">
-                {[3, 5, 4, 7, 4, 6, 3].map((h, i) => (
-                  <div
-                    key={i}
-                    className="w-[2px] rounded-full"
-                    style={{ height: h, background: mc.text, opacity: 0.55 }}
-                  />
-                ))}
-              </div>
-              <span
-                className="text-[11px] font-semibold tabular-nums"
-                style={{ color: mc.text }}
-              >
-                {formatDuration(entry.durationSeconds)}
-              </span>
-            </div>
-          )}
+      {/* ── Mood header ──────────────────────────────────── */}
+      <div className="flex items-center gap-2.5 mt-3 mb-5">
+        <span className="text-2xl leading-none">{emoji}</span>
+        <div>
+          <p className="text-[13px] font-semibold text-[#2a2520] capitalize leading-none">
+            Feeling {mood || "something"}
+          </p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b0a89e] mt-0.5">
+            Logged at {formatTime(entry.createdAt)}
+          </p>
         </div>
 
-        {/* Summary */}
-        <div className="px-4 pb-4">
-          {entry.summary ? (
-            <p className="text-[13px] text-[#6b6560] leading-relaxed line-clamp-3">
-              {entry.summary}
-            </p>
-          ) : entry.transcript ? (
-            <p className="text-[13px] text-[#6b6560] leading-relaxed line-clamp-3 italic">
-              {entry.transcript}
-            </p>
-          ) : null}
-        </div>
+        {/* Alignment badge */}
+        {entry.alignment && (
+          <span
+            className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
+            style={alignmentStyle(entry.alignment)}
+          >
+            {entry.alignment}
+          </span>
+        )}
       </div>
 
-      {/* Emotion chips */}
-      {entry.emotions.length > 0 && (
-        <div>
-          <p className="text-[10px] font-bold text-[#9a9185] uppercase tracking-widest mb-2 px-0.5">
-            Emotions
+      {/* ── Pull-quote from transcript  ─────────────────────── */}
+      {pullQuote  && (
+        <div className="px-0.5 my-2">
+          <p
+            className="text-[26px] leading-[1.35] text-[#2a2520] font-serif italic"
+            style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+          >
+            "{pullQuote}"
           </p>
-          <div className="flex flex-wrap gap-2">
-            {entry.emotions.slice(0, 5).map((e) => (
-              <span
-                key={e}
-                className="text-[11px] bg-[#fef3d0] text-[#a07a10] px-3 py-1.5 rounded-full font-semibold"
-              >
-                {e}
-              </span>
-            ))}
-            {entry.emotions.length > 5 && (
-              <span className="text-[11px] text-[#b0a89e] py-1.5 px-1">
-                +{entry.emotions.length - 5} more
-              </span>
-            )}
+        </div>
+      )}
+
+      {/* ── Audio player ─────────────────────────────────── */}
+      <AudioPlayer src={entry.audioUrl} durationSeconds={entry.durationSeconds} />
+
+      {/* ── Insight (main large text) ───────────────────── */}
+      {/* {entry.insight && (
+        <div className="px-1 py-2">
+          <p
+            className="text-[17px] leading-[1.5]   text-[#716d65]  "
+            style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+          >
+            {entry.insight}
+          </p>
+        </div>
+      )} */}
+
+      {/* ── Key pattern ──────────────────────────────────── */}
+      {entry.pattern && (
+        <div className="flex items-start gap-3 px-4 py-3.5 rounded-2xl bg-white border border-[#d2cfc7]">
+          {/* <div className="w-9 h-9 rounded-full bg-[#eff6ff] flex items-center justify-center shrink-0 mt-0.5">
+            <span className="text-base">✦</span>
+          </div> */}
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#b0a89e] mb-1">
+              Key Pattern
+            </p>
+            <p className="text-[13px] font-semibold text-[#2a2520] leading-snug capitalize">
+              {entry.pattern}
+            </p>
           </div>
         </div>
       )}
 
-      {/* Tags */}
-      {entry.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {entry.tags.slice(0, 5).map((t) => (
-            <span
-              key={t}
-              className="text-[11px] bg-[#f4f1e8] text-[#7a7168] px-3 py-1.5 rounded-full"
-            >
-              #{t}
-            </span>
-          ))}
+      {/* ── Themes ───────────────────────────────────────── */}
+      {entry.themes.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-[#9a9185] uppercase tracking-widest mb-2 px-0.5">
+            Themes
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {entry.themes.slice(0, 6).map((t) => (
+              <span
+                key={t}
+                className="text-[11px] bg-[#f4f1e8] text-[#7a7168] px-3 py-1.5 rounded-full font-medium"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* View full */}
+      {/* ── View full entry ───────────────────────────────── */}
       <Link
         href={`/archive/${entry.id}`}
         className="flex items-center justify-center gap-1.5 py-3.5 rounded-2xl bg-[#f4f1e8] text-[#7a7168] text-[13px] font-semibold hover:bg-[#eae7dc] active:scale-[0.98] transition-all"
@@ -356,12 +314,8 @@ function ProcessingCard() {
         </svg>
       </div>
       <div>
-        <p className="text-sm font-semibold text-[#4a463f]">
-          Processing your entry
-        </p>
-        <p className="text-xs text-[#b0a89e] mt-0.5">
-          Usually takes under a minute
-        </p>
+        <p className="text-sm font-semibold text-[#4a463f]">Processing your entry</p>
+        <p className="text-xs text-[#b0a89e] mt-0.5">Usually takes under a minute</p>
       </div>
     </div>
   );
@@ -376,12 +330,8 @@ function FailedCard() {
         </svg>
       </div>
       <div>
-        <p className="text-sm font-semibold text-[#4a463f]">
-          Something went wrong
-        </p>
-        <p className="text-xs text-[#b0a89e] mt-0.5">
-          Recording saved — we'll retry processing
-        </p>
+        <p className="text-sm font-semibold text-[#4a463f]">Something went wrong</p>
+        <p className="text-xs text-[#b0a89e] mt-0.5">Recording saved — we'll retry processing</p>
       </div>
     </div>
   );
@@ -389,10 +339,20 @@ function FailedCard() {
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
-function formatDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return m > 0 ? `${m}m ${s}s` : `${s}s`;
+function formatTime(date: Date): string {
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+function extractPullQuote(transcript: string | null): string | null {
+  if (!transcript) return null;
+  // Split on sentence boundaries, pick first one under 120 chars
+  const sentences = transcript.split(/(?<=[.!?])\s+/);
+  const short = sentences.find((s) => s.length >= 20 && s.length <= 120);
+  return short?.replace(/^["']|["']$/g, "") ?? null;
 }
 
 function moodEmoji(mood: string): string {
@@ -404,32 +364,11 @@ function moodEmoji(mood: string): string {
   return map[mood.toLowerCase()] ?? "🌙";
 }
 
-type MoodColors = {
-  cardBg: string;
-  text: string;
-  muted: string;
-  pill: string;
-};
-
-function moodColors(mood: string): MoodColors {
-  const map: Record<string, MoodColors> = {
-    happy:       { cardBg: "#fefce8", text: "#92400e", muted: "#b45309", pill: "#fef3c7" },
-    excited:     { cardBg: "#fefce8", text: "#92400e", muted: "#b45309", pill: "#fef3c7" },
-    grateful:    { cardBg: "#f0fdf4", text: "#166534", muted: "#15803d", pill: "#dcfce7" },
-    calm:        { cardBg: "#f0fdf4", text: "#166534", muted: "#15803d", pill: "#dcfce7" },
-    neutral:     { cardBg: "#f8fafc", text: "#475569", muted: "#64748b", pill: "#f1f5f9" },
-    sad:         { cardBg: "#eff6ff", text: "#1e40af", muted: "#2563eb", pill: "#dbeafe" },
-    anxious:     { cardBg: "#fff7ed", text: "#9a3412", muted: "#c2410c", pill: "#fed7aa" },
-    overwhelmed: { cardBg: "#fff7ed", text: "#9a3412", muted: "#c2410c", pill: "#fed7aa" },
-    angry:       { cardBg: "#fef2f2", text: "#991b1b", muted: "#b91c1c", pill: "#fee2e2" },
-    tired:       { cardBg: "#faf5ff", text: "#6b21a8", muted: "#7e22ce", pill: "#f3e8ff" },
+function alignmentStyle(alignment: string): React.CSSProperties {
+  const map: Record<string, React.CSSProperties> = {
+    aligned:     { background: "#dcfce7", color: "#166534" },
+    mixed:       { background: "#fef9c3", color: "#854d0e" },
+    contrasting: { background: "#fee2e2", color: "#991b1b" },
   };
-  return (
-    map[mood?.toLowerCase()] ?? {
-      cardBg: "#f4f1e8",
-      text: "#4a463f",
-      muted: "#9a9185",
-      pill: "#e8e4da",
-    }
-  );
+  return map[alignment.toLowerCase()] ?? { background: "#f4f1e8", color: "#7a7168" };
 }

@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 interface SaveRecordingOptions {
   imageUrl?: string
-  mood?: string  // stored in emotions[] — the single selected mood for this entry
+  userMood?: string  // stored in emotions[] — the single selected mood for this entry
 }
 
 export async function saveRecording(
@@ -21,7 +21,7 @@ export async function saveRecording(
     return { success: false, error: "Unauthorized" };
   }
 
-  const { imageUrl, mood } = options
+  const { imageUrl, userMood } = options
 
   // Fetch user info from Clerk
   const clerkUser = await (await clerkClient()).users.getUser(userId);
@@ -49,11 +49,11 @@ export async function saveRecording(
       ...(imageUrl ? { imageUrl } : {}),
       // mood goes into emotions[] — AI processing may add more emotions later
       // so we seed the array with the user's self-reported mood
-      mood: mood,
+      userMood,
     },
   });
 
-  revalidatePath("/archive");
+  revalidatePath("/dashboard");
 
   return { success: true, entry };
 }

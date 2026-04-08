@@ -53,17 +53,19 @@ export const processEntry = inngest.createFunction(
         if (!transcript) {
           throw new Error("Transcript doesnot exist can proceed forward❌");
         }
-        return await analyzeEntry(transcript);
+
+        return await analyzeEntry(transcript, entry.userMood);
       });
       // saving analysis in db and updating status to complete
       await step.run("save-analysis", async () => {
         await prisma.entry.update({
           where: { id: entryId },
           data: {
-            summary: analysis.summary,
-            reflection: analysis.reflection,
-            emotions: analysis.emotions,
-            tags: analysis.tags,
+            vibe: analysis.vibe,
+            alignment: analysis.alignment,
+            insight: analysis.insight,
+            pattern: analysis.pattern,
+            themes: analysis.themes,
             processedAt: new Date(),
             status: "COMPLETED",
             tokensUsed: analysis.tokensUsed,

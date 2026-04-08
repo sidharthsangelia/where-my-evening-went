@@ -161,7 +161,7 @@ export default function RecordPage() {
           audioResult.durationSeconds,
           {
             imageUrl,
-            mood: moodRef.current ?? undefined,
+            userMood: moodRef.current ?? undefined,
           },
         )
 

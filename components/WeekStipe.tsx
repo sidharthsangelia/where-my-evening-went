@@ -34,7 +34,7 @@ export default function WeekStrip({ week, statusMap }: WeekStripProps) {
               className={`
                 flex flex-col items-center gap-1 px-2 py-2
                 transition-all duration-200
-                ${isActive ? "bg-[#f5b21b] rounded-[20px]" : ""}
+                ${isActive ? "bg-[#621100] rounded-4xl" : ""}
               `}
             >
               {/* Day label */}
@@ -68,7 +68,7 @@ export default function WeekStrip({ week, statusMap }: WeekStripProps) {
                   <svg
                     viewBox="0 0 24 24"
                     className={`w-3.5 h-3.5 stroke-2 ${
-                      isActive ? "stroke-[#f5b21b]" : "stroke-white"
+                      isActive ? "stroke-[#621100]" : "stroke-white"
                     }`}
                     fill="none"
                     strokeLinecap="round"

@@ -26,7 +26,7 @@ export default async function DashboardDatePage({ params }: Props) {
     <>
       <MobileHeader />
       <main className="px-4 pt-4 pb-24">
-        <p className="text-sm text-[#9a9185] font-medium mb-4">{displayDate}</p>
+        {/* <p className="text-sm text-[#9a9185] font-medium mb-4">{displayDate}</p> */}
         <DayContent date={date} />
       </main>
     </>

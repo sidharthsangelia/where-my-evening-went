@@ -43,34 +43,28 @@ export default async function MobileHeader() {
   const thisWeekCount = loggedDates.size;
 
   return (
-    <header className="bg-[#f4f1e8] pt-10 pb-3">
+    <header className="bg-[#FDF8F5] pt-4 pb-3">
       {/* ── Greeting row ─────────────────────────────── */}
       <div className="flex items-center justify-between px-4 mb-5">
         <div>
-          <p className="text-xs font-semibold text-[#9a9185] tracking-wide uppercase">
+          {/* <p className="text-xs font-semibold text-[#9a9185] tracking-wide uppercase">
             {getGreeting()}
-          </p>
+          </p> */}
           <h1 className="text-[26px] font-bold text-[#2d2a24] tracking-tight leading-tight">
             Hey, <span className="capitalize">{firstName}</span> 👋
           </h1>
         </div>
 
         {/* Avatar */}
-        <div className="w-11 h-11 rounded-full bg-[#f5b21b] flex items-center justify-center shadow-md shadow-[#f5b21b]/30 shrink-0">
+        <div className="w-11 h-11 rounded-full bg-[#621100] flex items-center justify-center shadow-md shadow-[#f5b21b]/30 shrink-0">
           <span className="text-white font-bold text-[15px] leading-none">
             {initials}
           </span>
         </div>
       </div>
 
-      {/* ── Stats row ────────────────────────────────── */}
-      {/* <div className="grid grid-cols-3 gap-2 px-4 mb-5">
-        <StatCard emoji="🔥" value={stats.streak} label="day streak" />
-        <StatCard emoji="📓" value={stats.total}  label="entries"    />
-        <StatCard emoji="✨" value={thisWeekCount} label="this week"  />
-      </div> */}
 
-      {/* ── Week strip (unchanged) ────────────────────── */}
+      {/* ── Week strip ────────────────────── */}
       <WeekStrip week={week} statusMap={statusMap} />
     </header>
   );
