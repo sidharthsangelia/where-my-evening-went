@@ -40,7 +40,7 @@ export default function WeekStrip({ week, statusMap }: WeekStripProps) {
               {/* Day label */}
               <span
                 className={`text-[11px] font-semibold tracking-wide leading-none ${
-                  isActive ? "text-white" : "text-[#9a9185]"
+                  isActive ? "text-white" : "text-[#8e867b]"
                 }`}
               >
                 {day.label}
@@ -55,7 +55,7 @@ export default function WeekStrip({ week, statusMap }: WeekStripProps) {
                     status === "logged"
                       ? isActive
                         ? "bg-white"
-                        : "bg-[#f5b21b]"
+                        : "bg-[#621100]"
                       : status === "missed"
                         ? "bg-[#e0ddd5]"
                         : isActive
@@ -80,7 +80,7 @@ export default function WeekStrip({ week, statusMap }: WeekStripProps) {
                 {status === "missed" && (
                   <svg
                     viewBox="0 0 24 24"
-                    className="w-3.5 h-3.5 stroke-[#b0a89e] stroke-2"
+                    className="w-3.5 h-3.5 stroke-[#959089] stroke-2"
                     fill="none"
                     strokeLinecap="round"
                   >

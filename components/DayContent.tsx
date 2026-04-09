@@ -3,7 +3,7 @@ import { getDayEntry } from "@/actions/entry";
 import { parseDateParam, toDateParam } from "@/lib/week";
 import Link from "next/link";
 import AudioPlayer from "./AudioPlayer";
- 
+import NudgeCard from "./NudgeCard";
 
 type Entry = NonNullable<Awaited<ReturnType<typeof getDayEntry>>>;
 
@@ -14,25 +14,42 @@ interface Props {
 // ─── Prompts pool ──────────────────────────────────────────────────────────
 
 const PROMPTS = [
-  { text: "What surprised you tonight?",    icon: "✨" },
-  { text: "What's still on your mind?",     icon: "💭" },
-  { text: "What made you laugh today?",     icon: "😄" },
-  { text: "What drained your energy?",      icon: "🔋" },
-  { text: "Who did you connect with?",      icon: "👥" },
-  { text: "What do you want to remember?",  icon: "📌" },
-  { text: "What are you grateful for?",     icon: "🙏" },
-  { text: "How did your body feel today?",  icon: "🫀" },
+  { text: "What surprised you tonight?", icon: "✨" },
+  { text: "What's still on your mind?", icon: "💭" },
+  { text: "What made you laugh today?", icon: "😄" },
+  { text: "What drained your energy?", icon: "🔋" },
+  { text: "Who did you connect with?", icon: "👥" },
+  { text: "What do you want to remember?", icon: "📌" },
+  { text: "What are you grateful for?", icon: "🙏" },
+  { text: "How did your body feel today?", icon: "🫀" },
   { text: "What would you do differently?", icon: "🔄" },
 ];
 
 const MOODS = [
-  { key: "happy",   emoji: "😊", label: "Good"    },
-  { key: "calm",    emoji: "😌", label: "Calm"    },
-  { key: "tired",   emoji: "😴", label: "Tired"   },
+  { key: "happy", emoji: "😊", label: "Good" },
+  { key: "calm", emoji: "😌", label: "Calm" },
+  { key: "tired", emoji: "😴", label: "Tired" },
   { key: "anxious", emoji: "😰", label: "Anxious" },
-  { key: "sad",     emoji: "😔", label: "Meh"     },
-  { key: "excited", emoji: "🤩", label: "Pumped"  },
+  { key: "sad", emoji: "😔", label: "Meh" },
+  { key: "excited", emoji: "🤩", label: "Pumped" },
 ];
+
+const NUDGES = [
+  "Was it a good day… or just a long one? Think of one moment where you felt truly at peace.",
+  "What's one thing that happened today you didn't expect?",
+  "Who crossed your mind today, and why do you think that is?",
+  "What did your body try to tell you today that you ignored?",
+  "If today had a colour, what would it be and why?",
+  "What small thing made today bearable — or even good?",
+  "What are you still carrying from today that you need to set down?",
+  "What did you almost say today but didn't?",
+  "Where did your energy go today? Was it worth it?",
+];
+
+interface Props {
+  date: string;
+  isToday: boolean;
+}
 
 // ─── Root ──────────────────────────────────────────────────────────────────
 
@@ -40,13 +57,13 @@ export default async function DayContent({ date }: Props) {
   const { userId } = await auth();
   if (!userId) return null;
 
-  const entry        = await getDayEntry(userId, date);
-  const isToday      = date === toDateParam(new Date());
+  const entry = await getDayEntry(userId, date);
+  const isToday = date === toDateParam(new Date());
   const selectedDate = parseDateParam(date);
-  const isFuture     = selectedDate > new Date();
+  const isFuture = selectedDate > new Date();
 
   if (isFuture) return <FutureDay />;
-  if (!entry)   return <NoEntry date={date} isToday={isToday} />;
+  if (!entry) return <NoEntry date={date} isToday={isToday} />;
   return <EntryPreview entry={entry} />;
 }
 
@@ -59,115 +76,61 @@ function NoEntry({ date, isToday }: { date: string; isToday: boolean }) {
     PROMPTS[(seed + 3) % PROMPTS.length],
     PROMPTS[(seed + 6) % PROMPTS.length],
   ];
+  const nudge = NUDGES[seed % NUDGES.length];
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Night-sky hero card */}
-      <div
-        className="rounded-3xl p-5 relative overflow-hidden"
-        style={{
-          background: "linear-gradient(145deg, #1c1410 0%, #2a1c0d 45%, #150f08 100%)",
-          minHeight: "210px",
-        }}
-      >
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[
-            { top: "10%", left: "16%", w: 3, o: 0.4 },
-            { top: "6%",  left: "52%", w: 2, o: 0.25 },
-            { top: "22%", left: "77%", w: 3, o: 0.3 },
-            { top: "32%", left: "38%", w: 2, o: 0.2 },
-            { top: "4%",  left: "30%", w: 3, o: 0.35 },
-            { top: "18%", left: "87%", w: 2, o: 0.25 },
-            { top: "42%", left: "10%", w: 2, o: 0.2 },
-          ].map((s, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full bg-white"
-              style={{ top: s.top, left: s.left, width: s.w, height: s.w, opacity: s.o }}
-            />
-          ))}
+    <div className="flex flex-col   px-1" style={{ color: "#1a0a0a" }}>
+      {/* ── Large serif heading ─────────────────────────── */}
+      <div className="mt-2 mb-6">
+        <h1
+          className="text-[36px] font-bold leading-[1.15] text-[#1a0a0a]"
+          style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+        >
+          {isToday
+            ? "How did your\nevening unfold?"
+            : "How did that\nevening unfold?"}
+        </h1>
+      </div>
+
+      {/* ── Big mic button ──────────────────────────────── */}
+      <div className="flex flex-col items-center  pt-8 pb-8  ">
+        {/* Outer decorative ring */}
+        <div className="relative flex items-center justify-center">
+          {/* Faint arc ring */}
           <div
-            className="absolute rounded-full"
+            className="absolute rounded-full pointer-events-none"
             style={{
-              width: 72, height: 72, top: -16, right: 20,
-              background: "#fefce8",
-              boxShadow: "0 0 40px 8px rgba(254,249,236,0.12), 0 0 70px 20px rgba(245,178,27,0.06)",
+              width: 140,
+              height: 140,
+              border: "1.5px solid rgba(100,30,30,0.25)",
+              animation: "ripple 2.5s ease-out infinite",
             }}
           />
-        </div>
-
-        <div className="relative z-10">
-          <p className="text-[9px] font-bold text-white/35 uppercase tracking-[0.16em] mb-3">
-            {isToday ? "This evening" : "That evening"}
-          </p>
-          <h2 className="text-white font-bold text-xl leading-snug mb-1.5">
-            {isToday ? "Where did your\nevening go?" : "You didn't log\nthis evening"}
-          </h2>
-          <p className="text-white/45 text-[13px] leading-relaxed mb-6">
-            {isToday
-              ? "Talk for 3 minutes. We'll handle the rest."
-              : "It's not too late — add a late entry."}
-          </p>
+          <div
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              width: 120,
+              height: 120,
+              border: "1px solid rgba(100,30,30,0.2)",
+              animation: "ripple 2.5s ease-out 0.8s infinite",
+            }}
+          />
+          {/* Main button */}
           <Link
-            href={`/record?date=${date}`}
-            className="flex items-center justify-center gap-3 w-full py-[15px] rounded-2xl font-bold text-[15px] active:scale-[0.97] transition-transform"
-            style={{ background: "#f5b21b", color: "#fff" }}
+            href="/record"
+            className="w-24 h-24 rounded-full  flex items-center justify-center active:scale-95 transition-transform shadow-lg"
+            style={{ background: "#6b1a1a" }}
           >
-            <span className="text-base">🎙️</span>
-            <div className="flex items-end gap-[3px]" style={{ height: 14 }}>
-              {[4, 9, 6, 13, 8, 11, 5].map((h, i) => (
-                <div
-                  key={i}
-                  className="w-[2px] rounded-full bg-white/75"
-                  style={{ height: h, animation: `waveBar 1.2s ease-in-out ${i * 0.12}s infinite` }}
-                />
-              ))}
-            </div>
-            Start recording
+            {/* Mic icon */}
+            <svg viewBox="0 0 24 24" className="w-9 h-9 fill-white">
+              <path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4Z" />
+              <path d="M19 10a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V19H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-2.08A7 7 0 0 0 19 10Z" />
+            </svg>
           </Link>
         </div>
       </div>
 
-      {/* Mood picker */}
-      <div>
-        <p className="text-[10px] font-bold text-[#9a9185] uppercase tracking-widest mb-3 px-0.5">
-          How are you feeling?
-        </p>
-        <div className="grid grid-cols-3 gap-2">
-          {MOODS.map((mood) => (
-            <Link
-              key={mood.key}
-              href={`/record?date=${date}&mood=${mood.key}`}
-              className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-white border border-[#e8e4da] hover:border-[#f5b21b]/50 hover:bg-[#fefce8] active:scale-95 transition-all"
-            >
-              <span className="text-[22px] leading-none">{mood.emoji}</span>
-              <span className="text-[11px] font-semibold text-[#7a7168]">{mood.label}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Reflection prompts */}
-      <div>
-        <p className="text-[10px] font-bold text-[#9a9185] uppercase tracking-widest mb-3 px-0.5">
-          Need a starting point?
-        </p>
-        <div className="flex flex-col gap-2">
-          {prompts.map((prompt) => (
-            <Link
-              key={prompt.text}
-              href={`/record?date=${date}&prompt=${encodeURIComponent(prompt.text)}`}
-              className="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-white border border-[#e8e4da] hover:border-[#f5b21b]/40 hover:bg-[#fefce8] active:scale-[0.98] transition-all group"
-            >
-              <span className="text-base shrink-0">{prompt.icon}</span>
-              <p className="text-[13px] text-[#4a463f] leading-snug">{prompt.text}</p>
-              <span className="text-[#d0ccc4] ml-auto shrink-0 group-hover:text-[#f5b21b] transition-colors text-sm">
-                →
-              </span>
-            </Link>
-          ))}
-        </div>
-      </div>
+     <NudgeCard seed={seed} />
     </div>
   );
 }
@@ -182,7 +145,9 @@ function FutureDay() {
           <path d="M17 12h-5v5h5v-5ZM16 1v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1h-2Zm3 18H5V8h14v11Z" />
         </svg>
       </div>
-      <p className="text-sm text-[#b0a89e]">Nothing here yet — check back later.</p>
+      <p className="text-sm text-[#b0a89e]">
+        Nothing here yet — check back later.
+      </p>
     </div>
   );
 }
@@ -197,7 +162,7 @@ function EntryPreview({ entry }: { entry: Entry }) {
     return <FailedCard />;
   }
 
-  const mood  = entry.userMood ?? entry.vibe ?? "";
+  const mood = entry.userMood ?? entry.vibe ?? "";
   const emoji = moodEmoji(mood);
 
   // Pull a punchy short quote from the transcript (first sentence ≤ 120 chars)
@@ -205,7 +170,6 @@ function EntryPreview({ entry }: { entry: Entry }) {
 
   return (
     <div className="flex flex-col gap-4">
-
       {/* ── Mood header ──────────────────────────────────── */}
       <div className="flex items-center gap-2.5 mt-3 mb-5">
         <span className="text-2xl leading-none">{emoji}</span>
@@ -230,7 +194,7 @@ function EntryPreview({ entry }: { entry: Entry }) {
       </div>
 
       {/* ── Pull-quote from transcript  ─────────────────────── */}
-      {pullQuote  && (
+      {pullQuote && (
         <div className="px-0.5 my-2">
           <p
             className="text-[26px] leading-[1.35] text-[#2a2520] font-serif italic"
@@ -242,7 +206,10 @@ function EntryPreview({ entry }: { entry: Entry }) {
       )}
 
       {/* ── Audio player ─────────────────────────────────── */}
-      <AudioPlayer src={entry.audioUrl} durationSeconds={entry.durationSeconds} />
+      <AudioPlayer
+        src={entry.audioUrl}
+        durationSeconds={entry.durationSeconds}
+      />
 
       {/* ── Insight (main large text) ───────────────────── */}
       {/* {entry.insight && (
@@ -314,8 +281,12 @@ function ProcessingCard() {
         </svg>
       </div>
       <div>
-        <p className="text-sm font-semibold text-[#4a463f]">Processing your entry</p>
-        <p className="text-xs text-[#b0a89e] mt-0.5">Usually takes under a minute</p>
+        <p className="text-sm font-semibold text-[#4a463f]">
+          Processing your entry
+        </p>
+        <p className="text-xs text-[#b0a89e] mt-0.5">
+          Usually takes under a minute
+        </p>
       </div>
     </div>
   );
@@ -330,8 +301,12 @@ function FailedCard() {
         </svg>
       </div>
       <div>
-        <p className="text-sm font-semibold text-[#4a463f]">Something went wrong</p>
-        <p className="text-xs text-[#b0a89e] mt-0.5">Recording saved — we'll retry processing</p>
+        <p className="text-sm font-semibold text-[#4a463f]">
+          Something went wrong
+        </p>
+        <p className="text-xs text-[#b0a89e] mt-0.5">
+          Recording saved — we'll retry processing
+        </p>
       </div>
     </div>
   );
@@ -357,18 +332,27 @@ function extractPullQuote(transcript: string | null): string | null {
 
 function moodEmoji(mood: string): string {
   const map: Record<string, string> = {
-    happy: "😊", sad: "😔", anxious: "😰", calm: "😌",
-    excited: "🤩", tired: "😴", angry: "😤", grateful: "🙏",
-    overwhelmed: "😵", neutral: "😐",
+    happy: "😊",
+    sad: "😔",
+    anxious: "😰",
+    calm: "😌",
+    excited: "🤩",
+    tired: "😴",
+    angry: "😤",
+    grateful: "🙏",
+    overwhelmed: "😵",
+    neutral: "😐",
   };
   return map[mood.toLowerCase()] ?? "🌙";
 }
 
 function alignmentStyle(alignment: string): React.CSSProperties {
   const map: Record<string, React.CSSProperties> = {
-    aligned:     { background: "#dcfce7", color: "#166534" },
-    mixed:       { background: "#fef9c3", color: "#854d0e" },
+    aligned: { background: "#dcfce7", color: "#166534" },
+    mixed: { background: "#fef9c3", color: "#854d0e" },
     contrasting: { background: "#fee2e2", color: "#991b1b" },
   };
-  return map[alignment.toLowerCase()] ?? { background: "#f4f1e8", color: "#7a7168" };
+  return (
+    map[alignment.toLowerCase()] ?? { background: "#f4f1e8", color: "#7a7168" }
+  );
 }
