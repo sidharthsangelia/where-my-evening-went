@@ -1,10 +1,9 @@
-// NudgeCard.tsx
 "use client";
 
 import { useState } from "react";
 
 const NUDGES = [
- "What did you actually do this evening vs what you planned?",
+  "What did you actually do this evening vs what you planned?",
   "Did the evening slip away before you noticed?",
   "What pulled you to your phone this evening?",
   "Was this evening's scroll worth what you traded for it?",
@@ -34,29 +33,71 @@ const NUDGES = [
 export default function NudgeCard({ seed }: { seed: number }) {
   const [index, setIndex] = useState(seed % NUDGES.length);
 
-  const next = () =>
-    setIndex((prev) => (prev + 1) % NUDGES.length);
+  const next = () => setIndex((prev) => (prev + 1) % NUDGES.length);
 
   return (
     <button
       onClick={next}
-      className="w-full text-left rounded-2xl bg-white border border-[#e4e0d8] px-4 py-2 active:scale-[0.98] transition-transform"
+      className="w-full text-left rounded-2xl active:scale-[0.98] transition-transform"
+      style={{
+        backgroundColor: "var(--card)",
+        border: "1px solid var(--border)",
+        padding: "8px 16px",
+      }}
     >
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-[#9a9185]">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "8px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <svg
+            viewBox="0 0 24 24"
+            style={{
+              width: "14px",
+              height: "14px",
+              fill: "var(--muted-foreground)",
+              flexShrink: 0,
+            }}
+          >
             <path d="M12 2a7 7 0 0 0-4 12.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26A7 7 0 0 0 12 2Zm2 14h-4v-1h4v1Zm0-2.28V13a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.72A5 5 0 1 1 17 9a4.93 4.93 0 0 1-3 4.72ZM10 19h4v1h-4Zm1 2h2v1h-2Z" />
           </svg>
-          <p className="text-[11px] font-semibold text-[#9a9185] tracking-wide">
+          <p
+            style={{
+              fontSize: "11px",
+              fontWeight: 600,
+              color: "var(--muted-foreground)",
+              letterSpacing: "0.04em",
+              margin: 0,
+            }}
+          >
             Gentle nudge
           </p>
         </div>
-        {/* Tap hint */}
-        <p className="text-[10px] text-[#c4bfb8]">tap to change</p>
+        <p
+          style={{
+            fontSize: "10px",
+            color: "var(--color-neutral-400, #C4BDB5)",
+            margin: 0,
+          }}
+        >
+          tap to change
+        </p>
       </div>
+
       <p
-        className="text-[15px] leading-[1.55] text-[#3a3028] italic"
-        style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+        style={{
+          fontSize: "15px",
+          lineHeight: 1.55,
+          color: "var(--foreground)",
+          fontFamily: "var(--font-display)",
+          fontStyle: "italic",
+          margin: 0,
+          opacity: 0.85,
+        }}
       >
         "{NUDGES[index]}"
       </p>

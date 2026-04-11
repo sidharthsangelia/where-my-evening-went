@@ -16,11 +16,8 @@ export default function WeekStrip({ week, statusMap }: WeekStripProps) {
   return (
     <div className="flex justify-between w-full px-1">
       {week.map((day) => {
-        const status = statusMap[day.label] ?? "empty";
-        const isToday = day.isToday;
-        const isActive =
-          activeDateParam === day.dateParam ||
-          (!activeDateParam && isToday);
+        const status   = statusMap[day.label] ?? "empty";
+        const isActive = activeDateParam === day.dateParam || (!activeDateParam && day.isToday);
 
         return (
           <Link
@@ -29,50 +26,55 @@ export default function WeekStrip({ week, statusMap }: WeekStripProps) {
             prefetch={true}
             className="flex flex-col items-center focus:outline-none"
           >
-            {/* Pill — sized to content, not to the cell */}
             <div
-              className={`
-                flex flex-col items-center gap-1 px-2 py-2
-                transition-all duration-200
-                ${isActive ? "bg-[#621100] rounded-4xl" : ""}
-              `}
+              className="flex flex-col items-center gap-1 px-2 py-2 transition-all duration-200 rounded-[2rem]"
+              style={isActive ? { background: "var(--color-primary)" } : {}}
             >
               {/* Day label */}
               <span
-                className={`text-[11px] font-semibold tracking-wide leading-none ${
-                  isActive ? "text-white" : "text-[#8e867b]"
-                }`}
+                className="text-[11px] font-semibold tracking-wide leading-none"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  color: isActive
+                    ? "var(--primary-foreground)"
+                    : "var(--color-neutral-600)",
+                }}
               >
                 {day.label}
               </span>
 
               {/* Status circle */}
               <div
-                className={`
-                  w-8 h-8 rounded-full flex items-center justify-center
-                  transition-colors duration-200
-                  ${
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200"
+                style={{
+                  background:
                     status === "logged"
                       ? isActive
-                        ? "bg-white"
-                        : "bg-[#621100]"
+                        ? "white"
+                        : "var(--color-primary)"
                       : status === "missed"
-                        ? "bg-[#e0ddd5]"
+                        ? "var(--color-neutral-300)"
                         : isActive
-                          ? "bg-white/30"
-                          : "border-2 border-[#e0ddd5]"
-                  }
-                `}
+                          ? "rgba(255,255,255,0.25)"
+                          : "transparent",
+                  border:
+                    status === "empty" && !isActive
+                      ? "2px solid var(--color-neutral-300)"
+                      : "none",
+                }}
               >
                 {status === "logged" && (
                   <svg
                     viewBox="0 0 24 24"
-                    className={`w-3.5 h-3.5 stroke-2 ${
-                      isActive ? "stroke-[#621100]" : "stroke-white"
-                    }`}
+                    className="w-3.5 h-3.5 stroke-2"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    style={{
+                      stroke: isActive
+                        ? "var(--color-primary)"
+                        : "white",
+                    }}
                   >
                     <path d="M5 13l4 4L19 7" />
                   </svg>
@@ -80,9 +82,10 @@ export default function WeekStrip({ week, statusMap }: WeekStripProps) {
                 {status === "missed" && (
                   <svg
                     viewBox="0 0 24 24"
-                    className="w-3.5 h-3.5 stroke-[#959089] stroke-2"
+                    className="w-3.5 h-3.5 stroke-2"
                     fill="none"
                     strokeLinecap="round"
+                    style={{ stroke: "var(--color-neutral-500)" }}
                   >
                     <path d="M18 6L6 18M6 6l12 12" />
                   </svg>

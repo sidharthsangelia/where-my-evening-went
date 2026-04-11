@@ -1,9 +1,27 @@
 import { type Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Manrope, Inter, DM_Serif_Display, Spectral } from "next/font/google";
 import "./globals.css";
-import MobileNav from "@/components/MobileNav";
-import MobileHeader from "@/components/MobileHeader";
+
+
+const manrope = Manrope({ 
+  subsets: ["latin"], 
+  variable: "--font-manrope"  
+});
+const inter = Inter({ subsets: ["latin"], variable: "--font-body" });
+const dmSerifDisplay = DM_Serif_Display({ 
+  weight: "400", 
+  subsets: ["latin"],
+  variable: "--font-dm-serif",
+  display: "swap",
+});
+
+const spectral = Spectral({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-spectral",
+  display: "swap",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +34,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Where My Evening Went",
+  title: "Dusk Voice",
   description: "An app to reflect on how you spend your evenings",
 };
 
@@ -28,9 +46,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
-        >
+     <body
+  className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${inter.variable} ${dmSerifDisplay.variable} ${spectral.variable} antialiased min-h-screen`}
+>
           {children}
         </body>
       </html>
