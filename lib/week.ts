@@ -23,7 +23,9 @@ export function toDateParam(d: Date): string {
 export function getWeek(): WeekDay[] {
   const today = new Date();
   const start = new Date(today);
-  start.setDate(today.getDate() - today.getDay()); // Sunday
+  const day = today.getDay();
+  const diff = (day === 0 ? -6 : 1 - day); // if Sunday, go back 6 days; otherwise go to Monday
+  start.setDate(today.getDate() + diff);
 
   return Array.from({ length: 7 }).map((_, i) => {
     const d = new Date(start);

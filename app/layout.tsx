@@ -1,6 +1,6 @@
 import { type Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Geist, Geist_Mono, Manrope, Inter, DM_Serif_Display, Spectral } from "next/font/google";
+import { Geist, Geist_Mono, Manrope, Inter, DM_Serif_Display, Spectral, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 
@@ -33,6 +33,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const playfairDisplay = Playfair_Display({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-playfair-display",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Dusk Voice",
   description: "An app to reflect on how you spend your evenings",
@@ -47,7 +54,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
      <body
-  className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${inter.variable} ${dmSerifDisplay.variable} ${spectral.variable} antialiased min-h-screen`}
+  className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${inter.variable} ${dmSerifDisplay.variable} ${spectral.variable} ${playfairDisplay.variable} antialiased min-h-screen`}
 >
           {children}
         </body>
