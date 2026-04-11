@@ -106,7 +106,7 @@ export default function EntryPreview({ entry }: { entry: Entry }) {
       >
         <div className="flex flex-col gap-1">
           <span className="text-[14px] font-bold leading-snug">
-            What's beneath the surface
+            See what's beneath the surface
           </span>
           <span className="text-[10px] font-semibold tracking-[0.06em]">
             patterns · insights · audio

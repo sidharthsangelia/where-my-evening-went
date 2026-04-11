@@ -1,4 +1,5 @@
-import DayContent from "@/components/DayContent";
+ 
+import DayContent from "@/components/DayContent/index";
 import MobileHeader from "@/components/MobileHeader";
 import { parseDateParam, toDateParam } from "@/lib/week";
 import { notFound } from "next/navigation";
@@ -15,6 +16,8 @@ export default async function DashboardDatePage({ params }: Props) {
   }
 
   const selectedDate = parseDateParam(date);
+  const today = new Date();
+  const isToday = selectedDate.toDateString() === today.toDateString();
 
   const displayDate = selectedDate.toLocaleDateString("en-US", {
     weekday: "long",
@@ -27,7 +30,7 @@ export default async function DashboardDatePage({ params }: Props) {
       <MobileHeader />
       <main className="px-4 pt-4 pb-24">
         {/* <p className="text-sm text-[#9a9185] font-medium mb-4">{displayDate}</p> */}
-        <DayContent date={date} />
+        <DayContent date={date} isToday={isToday} />
       </main>
     </>
   );
