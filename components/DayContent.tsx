@@ -40,7 +40,6 @@ function NoEntry({ date, isToday }: { date: string; isToday: boolean }) {
         <h1
           className="text-[34px] font-bold leading-[1.15]"
           style={{
-        
             color: "var(--foreground)",
           }}
         >
@@ -137,7 +136,7 @@ function EntryPreview({ entry }: { entry: Entry }) {
   return (
     <div className="flex flex-col gap-4">
       {/* ── Mood header ──────────────────────────────────── */}
-      <div className="flex items-center gap-2.5 mt-3 mb-5">
+      <div className="flex items-center gap-2.5 mt-3 mb-3">
         <span className="text-2xl leading-none">{emoji}</span>
         <div>
           <p
@@ -164,18 +163,50 @@ function EntryPreview({ entry }: { entry: Entry }) {
         )}
       </div>
 
-      {/* ── Pull-quote ───────────────────────────────────── */}
+      {/* ── Pull-quote + Themes ───────────────────────────── */}
       {pullQuote && (
-        <div className="px-0.5 my-2">
-          <p
-            className="text-[26px] leading-[1.35] italic"
-            style={{
-         
-              color: "var(--foreground)",
-            }}
+        <div className="flex flex-col gap-2.5 px-0.5 mb-2">
+          <h2
+            className="text-[28px] leading-[1.35] italic"
+            style={{ color: "var(--foreground)" }}
           >
             "{pullQuote}"
-          </p>
+          </h2>
+
+          {entry.themes.length > 0 && (
+            <div className="flex items-baseline gap-x-2 gap-y-1 flex-wrap mt-1">
+              <span
+                className="text-[10px] font-bold uppercase tracking-[0.14em] flex-shrink-0"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                themes
+              </span>
+              <span
+                className="text-[10px] font-light flex-shrink-0"
+                style={{ color: "var(--color-neutral-400)" }}
+              >
+                —
+              </span>
+              {entry.themes.slice(0, 3).map((t, i) => (
+                <span key={t} className="flex items-baseline gap-2">
+                  <span
+                    className="text-[12px] font-medium capitalize"
+                    style={{ color: "var(--muted-foreground)" }}
+                  >
+                    {t}
+                  </span>
+                  {i < Math.min(entry.themes.length, 3) - 1 && (
+                    <span
+                      className="text-[11px] font-light leading-none"
+                      style={{ color: "var(--color-neutral-400)" }}
+                    >
+                      /
+                    </span>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -186,7 +217,7 @@ function EntryPreview({ entry }: { entry: Entry }) {
       />
 
       {/* ── Key pattern ──────────────────────────────────── */}
-      {entry.pattern && (
+      {/* {entry.pattern && (
         <div
           className="flex items-start gap-3 px-4 py-3.5 rounded-2xl"
           style={{
@@ -209,50 +240,123 @@ function EntryPreview({ entry }: { entry: Entry }) {
             </p>
           </div>
         </div>
-      )}
+      )} */}
 
-      {/* ── Themes ───────────────────────────────────────── */}
-      {entry.themes.length > 0 && (
-        <div>
-          <p
-            className="text-[10px] font-bold uppercase tracking-widest mb-2 px-0.5"
-            style={{ color: "var(--muted-foreground)" }}
-          >
-            Themes
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {entry.themes.slice(0, 6).map((t) => (
-              <span
-                key={t}
-                className="text-[11px] px-3 py-1.5 rounded-full font-medium"
-                style={{
-                  background: "var(--muted)",
-                  color: "var(--muted-foreground)",
-                }}
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── View full entry ───────────────────────────────── */}
+      {/* ── CTA ──────────────────────────────────────────── */}
       <Link
         href={`/archive/${entry.id}`}
-        className="flex items-center justify-center gap-1.5 py-3.5 rounded-2xl text-[13px] font-semibold active:scale-[0.98] transition-all"
-        style={{
-          background: "var(--muted)",
-          color: "var(--muted-foreground)",
-        }}
+        className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-2xl active:scale-[0.98] transition-all my-4 "
+        style={{ border: "1px solid var(--color-primary)" }}
       >
-        View full entry{" "}
-        <span style={{ color: "var(--color-neutral-400, #C4BDB5)" }}>→</span>
+        <div className="flex flex-col gap-1">
+          <span className="text-[14px] font-bold leading-snug  ">
+            What's beneath the surface
+          </span>
+          <span
+            className="text-[10px] font-semibold tracking-[0.06em]"
+            // style={{ color: "rgba(255,255,255,0.5)" }}
+          >
+            patterns · insights · audio
+          </span>
+        </div>
+
+        <svg
+          viewBox="0 0 22 22"
+          fill="none"
+          className="w-[22px] h-[22px] flex-shrink-0"
+        >
+          <circle
+            cx="11"
+            cy="11"
+            r="3"
+            fill="var(--color-primary)"
+            opacity="0.7"
+          />
+          <line
+            x1="11"
+            y1="1"
+            x2="11"
+            y2="5"
+            stroke="var(--color-primary)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.5"
+          />
+          <line
+            x1="11"
+            y1="17"
+            x2="11"
+            y2="21"
+            stroke="var(--color-primary)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.5"
+          />
+          <line
+            x1="1"
+            y1="11"
+            x2="5"
+            y2="11"
+            stroke="var(--color-primary)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.5"
+          />
+          <line
+            x1="17"
+            y1="11"
+            x2="21"
+            y2="11"
+            stroke="var(--color-primary)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.5"
+          />
+          <line
+            x1="3.5"
+            y1="3.5"
+            x2="6.5"
+            y2="6.5"
+            stroke="var(--color-primary)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.25"
+          />
+          <line
+            x1="15.5"
+            y1="15.5"
+            x2="18.5"
+            y2="18.5"
+            stroke="var(--color-primary)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.25"
+          />
+          <line
+            x1="18.5"
+            y1="3.5"
+            x2="15.5"
+            y2="6.5"
+            stroke="var(--color-primary)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.25"
+          />
+          <line
+            x1="6.5"
+            y1="15.5"
+            x2="3.5"
+            y2="18.5"
+            stroke="var(--color-primary)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.25"
+          />
+        </svg>
       </Link>
     </div>
   );
 }
-
 // ─── Status cards ──────────────────────────────────────────────────────────
 
 function ProcessingCard() {
@@ -283,7 +387,10 @@ function ProcessingCard() {
         >
           Processing your entry
         </p>
-        <p className="text-xs mt-0.5" style={{ color: "var(--muted-foreground)" }}>
+        <p
+          className="text-xs mt-0.5"
+          style={{ color: "var(--muted-foreground)" }}
+        >
           Usually takes under a minute
         </p>
       </div>
@@ -297,12 +404,15 @@ function FailedCard() {
       className="rounded-2xl p-4 flex items-center gap-3"
       style={{
         background: "var(--card)",
-        border: "1px solid color-mix(in srgb, var(--destructive) 30%, transparent)",
+        border:
+          "1px solid color-mix(in srgb, var(--destructive) 30%, transparent)",
       }}
     >
       <div
         className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
-        style={{ background: "color-mix(in srgb, var(--destructive) 10%, transparent)" }}
+        style={{
+          background: "color-mix(in srgb, var(--destructive) 10%, transparent)",
+        }}
       >
         <svg
           viewBox="0 0 24 24"
@@ -319,7 +429,10 @@ function FailedCard() {
         >
           Something went wrong
         </p>
-        <p className="text-xs mt-0.5" style={{ color: "var(--muted-foreground)" }}>
+        <p
+          className="text-xs mt-0.5"
+          style={{ color: "var(--muted-foreground)" }}
+        >
           Recording saved — we'll retry processing
         </p>
       </div>
@@ -362,7 +475,7 @@ function moodEmoji(mood: string): string {
 
 function alignmentStyle(alignment: string): React.CSSProperties {
   const map: Record<string, React.CSSProperties> = {
-   aligned: { background: "#dcfce7", color: "#166534" },
+    aligned: { background: "#dcfce7", color: "#166534" },
     mixed: { background: "#fef9c3", color: "#854d0e" },
     contrasting: { background: "#fee2e2", color: "#991b1b" },
   };
