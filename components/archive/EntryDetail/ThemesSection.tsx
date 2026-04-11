@@ -41,7 +41,7 @@ export default function ThemesSection({ themes, pattern }: Props) {
                   key={theme}
                   className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold capitalize inline-block"
                   style={{
-                    transform: `rotate(${rot}deg)`,
+                    // transform: `rotate(${rot}deg)`,
                     background: color.bg,
                     color: color.color,
                     transition: "transform 0.2s ease",

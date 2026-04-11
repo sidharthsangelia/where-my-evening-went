@@ -110,7 +110,7 @@ export default function EntryDetail({ entry }: Props) {
 
       {/* ── Metadata footer ─────────────────────────── */}
       <div
-        className="mx-5 mt-4 pt-6 flex flex-col gap-1.5"
+        className="mx-5 mt-4 mb-8 pt-6 flex flex-col gap-1.5"
         style={{ borderTop: "1px solid var(--color-neutral-200)" }}
       >
         {[

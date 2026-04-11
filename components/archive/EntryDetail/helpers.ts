@@ -38,7 +38,7 @@ type AlignmentValue = {
 
 export const alignmentConfig: { [K in AlignmentKey]: AlignmentValue } = {
   aligned: {
-    label: "In Sync",
+    label: "Aligned",
     bg:     "#f0fdf4",
     text:   "#166534",
     accent: "#22c55e",
@@ -52,7 +52,7 @@ export const alignmentConfig: { [K in AlignmentKey]: AlignmentValue } = {
     dot:    "#d97706",
   },
   contrasting: {
-    label: "At odds",
+    label: "Contrasting",
     bg:     "#fff1f2",
     text:   "#9f1239",
     accent: "#f43f5e",
